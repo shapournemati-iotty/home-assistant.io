@@ -50,6 +50,10 @@ EU version:
 - [iotty Smart Shades Switch](https://iotty.uk/collections/frontpage/products/e2s-plus-smart-shades-switch-for-shutters-and-blinds)
 - [iotty Plus Interruttore Intelligente per Tende e Tapparelle](https://iotty.it/collections/prodotti-singoli/products/i3s-plus-interruttore-intelligente-per-tende-e-tapparelle) (currently only available for the Italian market)
 
+- iotty Shutter \
+  - [iotty Smart Shades Switch](https://iotty.uk/collections/frontpage/products/e2s-plus-smart-shades-switch-for-shutters-and-blinds)
+  - [iotty Plus Interruttore Intelligente per Tende e Tapparelle](https://iotty.it/collections/prodotti-singoli/products/i3s-plus-interruttore-intelligente-per-tende-e-tapparelle)
+
 ## Supported entities
 
 Each iotty device gets mapped into one Home Assistant device per gang, each with its own Switch entity.
