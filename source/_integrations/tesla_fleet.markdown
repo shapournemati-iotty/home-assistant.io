@@ -3,9 +3,15 @@ title: Tesla Fleet
 description: Instructions on how to integrate the Tesla Fleet API within Home Assistant.
 ha_category:
   - Binary sensor
+  - Button
   - Car
   - Climate
+  - Cover
   - Device tracker
+  - Lock
+  - Media player
+  - Number
+  - Select
   - Sensor
   - Switch
 ha_release: 2024.8
@@ -16,42 +22,62 @@ ha_codeowners:
 ha_domain: tesla_fleet
 ha_platforms:
   - binary_sensor
+  - button
   - climate
+  - cover
   - device_tracker
   - diagnostics
+  - lock
+  - media_player
+  - number
+  - select
   - sensor
   - switch
 ha_quality_scale: gold
 ha_integration_type: integration
 ---
 
-The Tesla Fleet API {% term integration %} exposes various sensors from Tesla vehicles and energy sites.
+The Tesla Fleet API {% term integration %} exposes various sensors from Tesla vehicles and energy sites using the [Tesla Fleet API](https://developer.tesla.com/).
 
 ## Prerequisites
 
-You must have a [Tesla](https://tesla.com) account and a Tesla vehicle, PowerWall, Solar, or Wall Connector.
+You must have a [Tesla](https://tesla.com) account, and a [Developer Application](https://developer.tesla.com/en_AU/dashboard).
 
-{% details "Use a custom OAuth application" %}
+### Developer Application
 
-The integration has a built-in OAuth application that will be suitable for most users. However, you can [create your own application](https://developer.tesla.com/dashboard) for the Tesla Fleet API and configure it as an [application credential](https://my.home-assistant.io/redirect/application_credentials). When creating the application, you must set `https://my.home-assistant.io/redirect/oauth` as the redirect URL.
-
-You will be prompted to pick your custom application credential when creating a Tesla Fleet config entry.
-
-{% enddetails %}
+You must [create your own application](https://developer.tesla.com/docs/fleet-api/getting-started/what-is-fleet-api#step-2-create-an-application) for the Tesla Fleet API and configure it as an [application credential](https://my.home-assistant.io/redirect/application_credentials).
+When creating the application, you must set the redirect URL to `https://my.home-assistant.io/redirect/oauth`, but the other URLs can be set as desired. You must also complete both [step 3](https://developer.tesla.com/docs/fleet-api/getting-started/what-is-fleet-api#step-3-generate-a-public-private-key-pair) and [step 4](https://developer.tesla.com/docs/fleet-api/getting-started/what-is-fleet-api#step-4-call-the-register-endpoint) before the application will be able to make API calls.
 
 {% include integrations/config_flow.md %}
 
 ## Scopes
 
-When connecting your Tesla account to Home Assistant, you **must** select the `Vehicle Information` or `Energy Product Information` scope. It is recommended you select all scopes for full functionality.
+When connecting your Tesla account to Home Assistant, you **must** select the `Vehicle Information` or `Energy Product Information` scope. It is recommended you select all scopes for full functionality. The `Vehicle Location` scope was added in Home Assistant 2024.1, so any authorizations performed on previous releases that want this scope will need to be [modified](https://accounts.tesla.com/en_au/account-settings/security?tab=tpty-apps).
 
-## Rate limits
+## Pay per use
+	
+Previously, Tesla restricted this integration to a very modest rate limit. However, from January 2025, accounts in eligible countries will be charged for every API call. Here's what you need to know:
 
-Tesla restricts open-source integrations to the ["Discovery" plan](https://developer.tesla.com/docs/fleet-api/getting-started/subscription-plans) which only allows for 200 vehicle data requests per day. The integration will initially poll every 90 seconds, making vehicle data requests only when the vehicle is awake, and then dynamically slow down polling based on how many vehicle data requests have been made in the last 24 hours.
+- Tesla provides a $10 credit per developer account per calandar month
+- Every vehicle coordinator refresh, vehicle command, and wake up has a cost
+- This credit only allows for a maximum of 5000 coordinator refreshes
+- Energy product APIs are free to use at this time
+- To go beyond the free credit, you must provide payment details to Tesla
+
+For more details please see [developer.tesla.com](https://developer.tesla.com).
 
 ## Command signing
 
-Certain vehicles, including all vehicles manufactured since late 2023, require vehicle commands to be encrypted end-to-end and signed with a private key. The Tesla Fleet integration is unable to perform this encryption at this time, so certain features may be disabled or throw an exception when used.
+Certain vehicles, including all vehicles manufactured since late 2023, require vehicle commands to be signed with a private key. All actions on vehicle entities will fail with an error if this is required and the key has not been added to the vehicle.
+
+You will need to use Tesla's [command line tools](https://github.com/teslamotors/vehicle-command/blob/main/README.md#installation-and-configuration) to generate a key pair and install the public key on your vehicle using Bluetooth.
+
+```shell
+tesla-keygen -key-file tesla_fleet.key create > tesla_fleet.pem
+tesla-control -ble -key-file tesla_fleet.key -vin VINVINVINVIN add-key-request tesla_fleet.pem owner cloud_key
+```
+
+Finally, copy `tesla_fleet.key` to your Home Assistant config directory and then reload the Tesla Fleet {% term integration %}.
 
 ## Entities
 
@@ -84,10 +110,34 @@ These are the entities available in the Tesla Fleet integration. Not all entitie
 |Binary sensor|Tire pressure warning rear right|No|
 |Binary sensor|Trip charging|No|
 |Binary sensor|User present|Yes|
+|Button|Flash lights|Yes|
+|Button|Homelink|Yes|
+|Button|Honk horn|Yes|
+|Button|Keyless driving|Yes|
+|Button|Play fart|Yes|
+|Button|Wake|Yes|
 |Climate|Cabin overheat protection|No|
 |Climate|Climate|Yes|
+|Cover|Charge port door|Yes|
+|Cover|Frunk|Yes|
+|Cover|Sunroof|No|
+|Cover|Trunk|Yes|
+|Cover|Vent windows|Yes|
 |Device tracker|Location|Yes|
 |Device tracker|Route|Yes|
+|Lock|Charge cable lock|Yes|
+|Lock|Lock|Yes|
+|Media player|Media player|Yes|
+|Number|Charge current|Yes|
+|Number|Charge limit|Yes|
+|Select|Seat heater front left|Yes|
+|Select|Seat heater front right|Yes|
+|Select|Seat heater rear center|No|
+|Select|Seat heater rear left|No|
+|Select|Seat heater rear right|No|
+|Select|Seat heater third row left|No|
+|Select|Seat heater third row right|No|
+|Select|Steering wheel heater|Yes|
 |Sensor|Battery level|Yes|
 |Sensor|Battery range|Yes|
 |Sensor|Charge cable|No|
@@ -100,7 +150,6 @@ These are the entities available in the Tesla Fleet integration. Not all entitie
 |Sensor|Distance to arrival|Yes|
 |Sensor|Driver temperature setting|No|
 |Sensor|Estimate battery range|No|
-|Sensor|Exterior color|No|
 |Sensor|Fast charger type|No|
 |Sensor|Ideal battery range|No|
 |Sensor|Inside temperature|Yes|
@@ -108,23 +157,13 @@ These are the entities available in the Tesla Fleet integration. Not all entitie
 |Sensor|Outside temperature|Yes|
 |Sensor|Passenger temperature setting|No|
 |Sensor|Power|No|
-|Sensor|Roof color|No|
-|Sensor|Scheduled charging mode|No|
-|Sensor|Scheduled charging start time|No|
-|Sensor|Scheduled departure time|No|
 |Sensor|Shift state|No|
 |Sensor|Speed|No|
 |Sensor|State of charge at arrival|No|
-|Sensor|Time at arrival|Yes|
-|Sensor|Time at full charge|Yes|
 |Sensor|Time to arrival|Yes|
 |Sensor|Time to full charge|Yes|
 |Sensor|Tire pressure front left|No|
 |Sensor|Tire pressure front right|No|
-|Sensor|Tire pressure last measured front left|No|
-|Sensor|Tire pressure last measured front right|No|
-|Sensor|Tire pressure last measured rear left|No|
-|Sensor|Tire pressure last measured rear right|No|
 |Sensor|Tire pressure rear left|No|
 |Sensor|Tire pressure rear right|No|
 |Sensor|Traffic delay|No|
@@ -143,11 +182,17 @@ These are the entities available in the Tesla Fleet integration. Not all entitie
 |Binary sensor|Backup capable|Yes|
 |Binary sensor|Grid services active|Yes|
 |Binary sensor|Grid services enabled|Yes|
+|Binary sensor|Storm watch active|Yes|
+|Number|Backup reserve|Yes|
+|Number|Off grid reserve|Yes|
+|Select|Allow export|Yes|
+|Select|Operation mode|Yes|
 |Sensor|Battery power|Yes|
 |Sensor|Energy left|Yes|
 |Sensor|Generator power|No|
 |Sensor|Grid power|Yes|
 |Sensor|Grid services power|Yes|
+|Sensor|Grid status|Yes|
 |Sensor|Island status|Yes|
 |Sensor|Load power|Yes|
 |Sensor|Percentage charged|Yes|
@@ -170,3 +215,11 @@ These are the entities available in the Tesla Fleet integration. Not all entitie
 ## Vehicle sleep
 
 Constant API polling will prevent most Model S and Model X vehicles manufactured before 2021 from sleeping, so the integration will stop polling these vehicles for 15 minutes, after 15 minutes of inactivity. You can call the `homeassistant.update_entity` service to force polling the API, which will reset the timer.
+
+## Energy dashboard
+
+The Tesla Fleet API only provides power data for Powerwall and Solar products. This means they cannot be used on the energy dashboard directly.
+
+Energy flows can be calculated from `Battery power` and `Grid power` sensors using a [Template Sensor](/integrations/template/) to separate the positive and negative values into positive import and export values.
+The `Load power`, `Solar power`, and the templated sensors can then use a [Riemann Sum](/integrations/integration/) to convert their instant power (kW) values into cumulative energy values (kWh),
+which then can be used within the energy dashboard.

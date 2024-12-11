@@ -61,32 +61,29 @@ Your Husqvarna account username/password used for the *Automower® Connect*  pho
 6. Leave this tab open in browser and continue with Home Assistant configuration.
    ![Application Overview](/images/integrations/husqvarna_automower/application_overview.png)
 
-### Home Assistant
-
-The My Home Assistant redirect feature needs to be setup to redirect to your Home Assistant installation. See [My FAQ](https://my.home-assistant.io/faq) for additional information.
-
-1. Add the integration to your Home Assistant installation and test the redirect feature by following below link:
-   [![my_button](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=husqvarna_automower)
-
-2. Acknowledge prompts to open link, install Husqvarna Automower integration.
-
-3. Acknowledge prompt to setup application credentials.
-
-4. Enter the following from the Husqvarna developer tab:
-
-   - A name of the application
-   - Copy and paste the *Application key* into the *OAuth Client ID* field
-   - Copy and paste the *Application secret* into the *OAuth Client Secret* field
-
-5. Click **Create**
-
-6. Browser will be redirected to Husqvarna Developer site.  Sign in and Authorize the integration to connect with your Husqvarna account
-
-7. After authorizing the integration the browser will show the My Home Assistant redirect link to link this account.  Click on **Link Account**.
-
-8. Confirm successful connection of mower and assign to an area.
-
 {% include integrations/config_flow.md %}
+
+{% details "I have manually disabled My Home Assistant" %}
+
+If you don't have [My Home Assistant](/integrations/my) on your installation,
+you can use `<HOME_ASSISTANT_URL>/auth/external/callback` as the redirect URI
+instead.
+
+The `<HOME_ASSISTANT_URL>` must be the same as used during the configuration/
+authentication process.
+
+Internal examples: `http://192.168.0.2:8123/auth/external/callback`, `http://homeassistant.local:8123/auth/external/callback`."
+
+{% enddetails %}
+
+{% configuration_basic %}
+Name:
+    description: "Enter the name for the provided credentials. You can choose your favorite name."
+OAuth Client ID:
+    description: "Enter the Application key from your Husqvarna developer application."
+OAuth Client Secret:
+    description: "Enter the Application secret from your Husqvarna developer application."
+{% endconfiguration_basic %}
 
 ## Troubleshooting
 
@@ -104,12 +101,13 @@ The integration will create the following binary sensors:
   *The mower is currently charging. It reports this state if it autonomously returned to the dock due to low battery and if it leaves the dock for mowing after being fully charged.*
 - Leaving dock  
   *The mower is currently leaving the charging station and heading out to a starting point.*
-- Returning to dock  
-  *The mower is on its way home to the charging station.*
 
 ### Button (if available)
 
-The integration will create a button entity for confirming minor mower errors.
+The integration will create the following buttons:
+
+- **Confirm Error** (if available): For confirming minor mower errors.
+- **Sync clock**: Syncs the clock of the mower with the time set in Home Assistant.
 
 ### Calendar
 
@@ -161,6 +159,11 @@ The integration will create the following sensors:
 - Total searching time
 - Work area (if available). For example: *My lawn*, *Front lawn*, *Back lawn*
 
+For each work area with activated systematic mowing these sensors are created:
+
+- Progress (in percent)
+- Last time completed
+
 ### Switch
 
 #### Avoid (if available)
@@ -170,6 +173,10 @@ The integration will create a switch for each stay-out zone defined for your mow
 #### Enable schedule
 
 The integration will create a switch to enable or disable the schedule of the mower. If the switch is on, the mower will mow according to the schedule. If the switch is off the mower will return to the dock and park until further notice.
+
+#### Work area (if available)
+
+The integration will create a switch for each work area defined for your mower. When the switch is on, the mower mows the corresponding area. When the switch is off, the mower doesn't mow the corresponding area.
 
 ## Actions
 
@@ -200,7 +207,7 @@ This will override all your schedules during this time. The duration can be give
 
 ```yaml
 # Replace <name> with the name of your mower.
-service: husqvarna_automower.override_schedule
+service: husqvarna_automower.override_schedule_work_area
 target:
   entity_id: lawn_mower.<name>
 data:
@@ -210,3 +217,14 @@ data:
     minutes: 30
   work_area_id: 123456 ### Work area ID for the "Front lawn" from the example above.
 ```
+
+## Known limitations
+
+- The mower can only be started using the `lawn_mower.start_mowing` action during the schedules configured in the Automower Connect App. To start the mower outside the scheduled times, use the `husqvarna_automower.override_schedule` action. In both cases, the battery must be fully charged beforehand.
+- Stay-out zone handling is not supported for mowers equipped with EPOS technology.
+
+## Remove integration
+
+This integration can be removed by following these steps:
+
+{% include integrations/remove_device_service.md %}

@@ -23,7 +23,16 @@ ha_platforms:
 ha_integration_type: integration
 ---
 
-An integration for the [Enphase Envoy](https://enphase.com/en-us/products-and-services/envoy-and-combiner) solar energy gateway. This integration works with older models that only have production metrics (ie. Envoy-C) and newer models that offer both production and consumption metrics (ie. Envoy-S). Firmware version 3.9 or newer is required.
+An integration for the [Enphase Envoy](https://enphase.com/en-us/products-and-services/envoy-and-combiner) solar energy gateway. This integration works with older models that only have production metrics (ie. Envoy-C) and newer models that offer both production and consumption metrics (ie. Envoy-S).
+
+## Prerequisites
+
+- The Envoy must be configured and commissioned.
+- The Envoy must be on your local network with IPV4 connectivity from Home Assistant.
+- Envoy firmware version 3.9 or newer.
+- With Envoy firmware 7 and greater
+  - an Enlighten cloud username and password.
+  - Home Assistant 2023.9 or newer.
 
 {% include integrations/config_flow.md %}
 
@@ -131,6 +140,8 @@ This integration provides several values suitable for the energy dashboard:
 The integration provides a `configure` menu to configure the following options:
 
 - Collect test fixture data in [diagnostics report](#diagnostics) - No/Yes
+- Always use a new connection when requesting data from the Envoy - No/Yes
+  - Some older Envoy firmware may exhibit connection issues when using the, by default enabled, keep-alive connection and report failures. When set, this option disables the use of keep-alive and builds a new connection at each data request. This makes the communication more reliable for these firmware versions. Reported for the Envoy-R but may apply to other older firmware versions as well.
 
 ## Debug logs and diagnostics
 
