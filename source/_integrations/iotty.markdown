@@ -41,9 +41,9 @@ US version:
 
 EU version:
 
-- [iotty Smart Switch](https://iotty.uk/collections/frontpage/products/iotty-smart-switch)
-- [iotty Smart Switch (variant)](https://iotty.uk/collections/frontpage/products/iotty-smart-switch?variant=40820222460082)
-- [iotty Plus Interruttore Intelligente](https://iotty.it/collections/frontpage/products/iotty-plus-interruttore-intelligente-per-luci-e-cancelli)
+- [iotty Smart Switch](https://iotty.uk/collections/prodotti-singoli/products/e1-e2-plus-smart-switch-for-lights-and-gates)
+- [iotty Smart Switch (variant)](https://iotty.uk/collections/prodotti-singoli/products/e1-e2-plus-smart-switch-for-lights-and-gates?variant=48626603032911)
+- [iotty Plus Interruttore Intelligente](https://iotty.it/collections/prodotti-singoli/products/i3-plus-interruttore-intelligente-per-luci-e-cancelli)
 
 ### iotty Shutter
 
