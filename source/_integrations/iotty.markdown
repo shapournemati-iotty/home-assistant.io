@@ -53,8 +53,8 @@ EU version:
 ### iotty Outlet
 
 - [iotty Smart Outlet - Italy](https://iotty.it/collections/prodotti-singoli/products/oit-plus-presa-intelligente)
-- [iotty Smart Outlet - Germany](https://iotty.fr/collections/prodotti-singoli/products/ofr-plus-prise-intelligente)
-- [iotty Smart Outlet - France](https://iotty.de/collections/prodotti-singoli/products/ode-plus-smarte-steckdose)
+- [iotty Smart Outlet - Germany](https://iotty.de/collections/prodotti-singoli/products/ode-plus-smarte-steckdose)
+- [iotty Smart Outlet - France](https://iotty.fr/collections/prodotti-singoli/products/ofr-plus-prise-intelligente)
 
 ## Supported entities
 
