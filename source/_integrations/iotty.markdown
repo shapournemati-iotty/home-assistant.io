@@ -47,7 +47,7 @@ EU version:
 ### iotty Shutter
 
 - [E2S PLUS Smart Shades Switch - for shutters and blinds](https://iotty.uk/collections/frontpage/products/e2s-plus-smart-shades-switch-for-shutters-and-blinds)
-- [i3S PLUS Smart Shades Switch - for shutters and blinds](https://iotty.it/collections/prodotti-singoli/products/i3s-plus-interruttore-intelligente-per-tende-e-tapparelle) (currently only available for the Italian market)
+- [i3S PLUS Smart Shades Switch - for shutters and blinds](https://iotty.it/collections/prodotti-singoli/products/i3s-plus-interruttore-intelligente-per-tende-e-tapparelle)
 
 ### iotty Outlet
 
